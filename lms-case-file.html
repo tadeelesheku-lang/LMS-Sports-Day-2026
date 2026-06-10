@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS Case File 16-07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   LMS SPORTS DAY — CASE FILE WIDGET
+   Set PHASE in the <script> at the bottom (1, 2 or 3).
+   Set the kickoff date/time in the same place (TARGET).
+   Spoiler rule: never name the suspect or the venue here.
+   ============================================================ */
+:root{
+  --ink:#0B0E1A; --ink2:#12182B; --panel:#161D33;
+  --paper:#EDE8DC; --orange:#E8732A; --gold:#D4AF37;
+  --red:#C8322B; --slate:#8A93A8; --line:rgba(255,255,255,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ink);color:#fff;
+  font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px 28px}
+.disp{font-family:"Archivo Black","Arial Black",Impact,sans-serif}
+
+/* faint track-lane backdrop */
+body{position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,transparent 0 38px,rgba(255,255,255,0.025) 38px 39px)}
+.wrap{position:relative;z-index:1}
+
+/* status bar */
+.bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding:12px 0;font-size:11px;
+  letter-spacing:1.5px;color:var(--slate)}
+.news{display:flex;align-items:center;gap:7px;color:#fff;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red);
+  animation:blink 1.4s steps(1) infinite}
+.bar .sp{margin-left:auto}
+.bar .case{color:var(--gold)}
+@keyframes blink{50%{opacity:0.25}}
+
+/* hero */
+.hero{padding:30px 0 14px;text-align:center}
+.stamp{display:inline-block;background:var(--orange);color:var(--ink);
+  font-size:clamp(34px,9vw,60px);letter-spacing:3px;padding:6px 30px;
+  transform:rotate(-2.5deg);border-radius:2px;line-height:1}
+.sub{color:var(--slate);font-size:13px;letter-spacing:1px;margin-top:20px}
+.sub b{color:#fff}
+
+/* pipette outline (the absence) */
+.pip{margin:22px auto 4px;display:block}
+.pip path,.pip rect{fill:none;stroke:var(--gold);stroke-width:2;
+  stroke-dasharray:5 5;opacity:.55;stroke-linejoin:round}
+
+/* case clock */
+.clock{margin:18px auto 6px;max-width:560px;
+  background:var(--ink2);border:1px solid var(--line);border-radius:6px;
+  padding:18px 16px 16px;position:relative}
+.clock .tag{position:absolute;top:-10px;left:18px;background:var(--red);
+  color:#fff;font-size:10px;letter-spacing:2px;padding:3px 10px;border-radius:2px;font-weight:700}
+.clock .tag .d{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#fff;margin-right:6px;vertical-align:1px;animation:blink 1.4s steps(1) infinite}
+.clabel{color:var(--slate);font-size:11px;letter-spacing:2px;text-align:center;margin-bottom:12px}
+.digits{display:flex;justify-content:center;align-items:flex-start;gap:6px}
+.unit{min-width:64px}
+.num{font-size:clamp(30px,9vw,46px);font-weight:700;color:var(--gold);
+  font-variant-numeric:tabular-nums;line-height:1}
+.ulab{font-size:9px;letter-spacing:2px;color:var(--slate);margin-top:7px}
+.colon{font-size:clamp(28px,8vw,42px);color:var(--orange);line-height:1.05;
+  animation:blink 1s steps(1) infinite}
+.cracked{font-size:clamp(26px,7vw,40px);color:var(--orange);text-align:center}
+
+/* section heading */
+.head{display:flex;align-items:center;gap:12px;margin:34px 0 16px}
+.head h2{font-size:13px;letter-spacing:3px;color:#fff;font-weight:700}
+.head .ln{flex:1;height:1px;background:var(--line)}
+.head .x{font-size:10px;color:var(--slate);letter-spacing:1px}
+
+/* evidence board */
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+.ex{background:var(--paper);color:#1a1a1a;border-radius:2px;padding:10px 10px 12px;
+  transform:rotate(var(--r,-1deg));position:relative;
+  box-shadow:0 1px 0 rgba(0,0,0,.4)}
+.ex .pin{position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+  width:13px;height:13px;border-radius:50%;background:var(--red);
+  border:2px solid rgba(0,0,0,.25)}
+.ph{height:108px;background:#2a3142;border-radius:1px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+.ph span{color:#5b657d;font-size:10px;letter-spacing:1px;text-align:center;padding:0 8px;line-height:1.5}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph::after{content:"EVIDENCE";position:absolute;bottom:6px;right:6px;
+  font-size:8px;letter-spacing:2px;color:rgba(255,255,255,.35);font-weight:700}
+.ex .cap{font-size:10px;letter-spacing:.5px;color:#33373f;margin-top:8px;line-height:1.4}
+.ex .cap b{color:var(--red)}
+.redact{background:#1a1a1a;color:#1a1a1a;padding:0 4px;border-radius:1px}
+
+/* dossier / redacted */
+.dossier{background:var(--ink2);border:1px solid var(--line);border-radius:6px;
+  padding:20px;margin-top:4px}
+.row{display:flex;align-items:center;gap:14px;padding:11px 0;
+  border-bottom:1px dashed var(--line);font-size:13px}
+.row:last-child{border-bottom:0}
+.row .k{color:var(--slate);font-size:11px;letter-spacing:1px;min-width:130px}
+.bars{flex:1;display:flex;gap:6px;flex-wrap:wrap}
+.bars i{height:15px;background:#000;border-radius:1px;display:inline-block}
+.declass{margin-top:16px;text-align:center;color:var(--orange);
+  font-size:11px;letter-spacing:2px}
+
+/* CTA (phase 3) */
+.cta{display:none;margin:28px auto 0;max-width:560px;text-align:center;
+  background:linear-gradient(0deg,var(--ink2),var(--ink2));
+  border:1px solid var(--orange);border-radius:6px;padding:24px 20px}
+.cta h3{font-size:clamp(18px,5vw,26px);color:#fff;letter-spacing:1px}
+.cta p{color:var(--slate);font-size:12px;margin:8px 0 16px;letter-spacing:.5px}
+.btn{display:inline-block;background:var(--orange);color:var(--ink);
+  text-decoration:none;font-weight:700;font-size:13px;letter-spacing:1.5px;
+  padding:13px 30px;border-radius:3px}
+.btn:hover{filter:brightness(1.08)}
+
+/* ticker */
+.ticker{margin-top:34px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  overflow:hidden;white-space:nowrap;padding:11px 0}
+.ticker .run{display:inline-block;padding-left:100%;
+  animation:scroll 34s linear infinite;font-size:11px;letter-spacing:1.5px;color:var(--slate)}
+.ticker .run b{color:var(--orange)}
+@keyframes scroll{to{transform:translateX(-100%)}}
+
+.foot{text-align:center;color:var(--slate);font-size:10px;letter-spacing:2px;margin-top:22px}
+
+@media (prefers-reduced-motion:reduce){
+  .dot,.colon,.tag .d{animation:none}
+  .ticker .run{animation:none;padding-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <span class="news"><span class="dot"></span>LMS NEWS</span>
+    <span id="stamp-time">REC &nbsp;00:00:00</span>
+    <span class="sp"></span>
+    <span class="case">CASE&nbsp;#16-07</span>
+    <span>INVESTIGATION&nbsp;ONGOING</span>
+  </div>
+
+  <div class="hero">
+    <span class="stamp disp">MISSING</span>
+
+    <svg class="pip" width="96" height="168" viewBox="0 0 96 168" aria-label="Outline of the missing golden pipette">
+      <rect x="36" y="6" width="24" height="12" rx="3"/>
+      <rect x="33" y="18" width="30" height="58" rx="5"/>
+      <path d="M33 33 L18 28 L18 39 L33 44"/>
+      <rect x="38" y="76" width="20" height="18" rx="3"/>
+      <path d="M41 94 L41 124 L45 150 L48 160 L51 150 L55 124 L55 94"/>
+    </svg>
+
+    <p class="sub">One (1) <b>Golden Pipette</b>. Champion's trophy.<br>
+      Last confirmed sighting: <b>Floor 6</b>. Reward: <b>glory</b>.</p>
+  </div>
+
+  <div class="clock">
+    <span class="tag"><span class="d"></span>LIVE</span>
+    <div class="clabel" id="clabel">CASE CRACKED IN</div>
+    <div class="digits" id="digits">
+      <div class="unit"><div class="num" id="dd">00</div><div class="ulab">DAYS</div></div>
+      <div class="colon">:</div>
+      <div class="unit"><div class="num" id="hh">00</div><div class="ulab">HRS</div></div>
+      <div class="colon">:</div>
+      <div class="unit"><div class="num" id="mm">00</div><div class="ulab">MIN</div></div>
+      <div class="colon">:</div>
+      <div class="unit"><div class="num" id="ss">00</div><div class="ulab">SEC</div></div>
+    </div>
+  </div>
+
+  <div class="head">
+    <h2 class="disp">EVIDENCE LOG</h2><span class="ln"></span><span class="x">EXHIBITS A–C</span>
+  </div>
+  <!-- To add real stills later: replace each <div class="ph">…</div> with
+       <div class="ph"><img src="exhibit-a.jpg" alt=""></div>  (img is styled to fill) -->
+  <div class="board">
+    <div class="ex" style="--r:-1.5deg"><span class="pin"></span>
+      <div class="ph"><span>PHOTO WITHHELD<br>PENDING RELEASE</span></div>
+      <div class="cap"><b>EXHIBIT A</b> — empty display plinth. Trophy absent.</div>
+    </div>
+    <div class="ex" style="--r:1.2deg"><span class="pin"></span>
+      <div class="ph"><span>CCTV FRAME<br>CORRUPTED</span></div>
+      <div class="cap"><b>EXHIBIT B</b> — corridor CCTV, 06:14. Subject <span class="redact">unidentified</span>.</div>
+    </div>
+    <div class="ex" style="--r:-0.6deg"><span class="pin"></span>
+      <div class="ph"><span>SCAN<br>PENDING</span></div>
+      <div class="cap"><b>EXHIBIT C</b> — anonymous note. Contents <span class="redact">redacted</span>.</div>
+    </div>
+  </div>
+
+  <div class="head">
+    <h2 class="disp">SUSPECT DOSSIER</h2><span class="ln"></span><span class="x">CLASSIFIED</span>
+  </div>
+  <div class="dossier">
+    <div class="row"><span class="k">SUSPECT</span>
+      <span class="bars"><i style="width:120px"></i><i style="width:60px"></i><i style="width:90px"></i></span></div>
+    <div class="row"><span class="k">LAST KNOWN LOCATION</span>
+      <span class="bars"><i style="width:80px"></i><i style="width:140px"></i></span></div>
+    <div class="row"><span class="k">MOTIVE</span>
+      <span class="bars"><i style="width:100px"></i><i style="width:70px"></i><i style="width:110px"></i></span></div>
+    <div class="declass">█ FILE DECLASSIFIES 16.07.26 █</div>
+  </div>
+
+  <div class="cta" id="cta">
+    <h3 class="disp">THE SEARCH NEEDS YOU</h3>
+    <p>Recovery teams forming now. Sign up, suit up, bring it home.</p>
+    <a class="btn" id="ctabtn" href="#">JOIN THE SEARCH PARTY</a>
+  </div>
+
+  <div class="ticker">
+    <span class="run">BREAKING &nbsp;•&nbsp; Golden Pipette reported missing from Hammersmith &nbsp;•&nbsp; <b>Floor 6 declines to comment</b> &nbsp;•&nbsp; Reception "saw nothing" &nbsp;•&nbsp; ICTEM unreachable, as usual &nbsp;•&nbsp; <b>Tip line now open</b> &nbsp;•&nbsp; Lift seen heading to Floor 7 (no lab up there?) &nbsp;•&nbsp; Witnesses describe a gold object, approx. 1 channel, 20µl &nbsp;•&nbsp; <b>Case cracks 16 July</b> &nbsp;•&nbsp; </span>
+  </div>
+
+  <div class="foot">LMS SPORTS DAY · 16 JULY 2026 · INVESTIGATION ONGOING</div>
+
+</div>
+
+<script>
+/* ---- CONFIG ------------------------------------------------ */
+const PHASE  = 1;                       // 1 = crime, 2 = hunt, 3 = recruit search party
+const TARGET = "2026-07-16T09:00:00";   // kickoff time (TBC — set the real time when confirmed)
+const REGISTER_URL = "#";               // paste the MS Form / SharePoint registration link for phase 3
+/* ------------------------------------------------------------ */
+
+// phase-specific hero label + CTA
+const labels = {1:"CASE CRACKED IN", 2:"CASE CRACKED IN", 3:"OPERATION RECOVERY — LAUNCHES IN"};
+document.getElementById('clabel').textContent = labels[PHASE] || labels[1];
+if(PHASE >= 3){
+  document.getElementById('cta').style.display = 'block';
+  const b = document.getElementById('ctabtn');
+  if(REGISTER_URL && REGISTER_URL !== "#") b.href = REGISTER_URL;
+}
+
+// live "CCTV" timestamp in the status bar
+function clockTime(){
+  const n = new Date();
+  const p = x => String(x).padStart(2,'0');
+  document.getElementById('stamp-time').textContent =
+    'REC \u00a0' + p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+}
+
+// countdown
+const target = new Date(TARGET).getTime();
+function tick(){
+  const diff = target - Date.now();
+  if(diff <= 0){
+    document.getElementById('digits').innerHTML =
+      '<div class="cracked disp">CASE CRACKED. SEE YOU AT THE TRACK.</div>';
+    document.getElementById('clabel').textContent = '16 JULY 2026';
+    return false;
+  }
+  const s = Math.floor(diff/1000);
+  const p = x => String(x).padStart(2,'0');
+  document.getElementById('dd').textContent = Math.floor(s/86400);
+  document.getElementById('hh').textContent = p(Math.floor(s%86400/3600));
+  document.getElementById('mm').textContent = p(Math.floor(s%3600/60));
+  document.getElementById('ss').textContent = p(s%60);
+  return true;
+}
+tick(); clockTime();
+const iv = setInterval(()=>{ clockTime(); if(!tick()) clearInterval(iv); }, 1000);
+</script>
+</body>
+</html>
